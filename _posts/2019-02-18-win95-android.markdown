@@ -1,0 +1,214 @@
+---
+layout: post
+title:  Windows 95 Games on Android
+date:   2019-02-17 13:00:00 -0400
+categories: how-to android games
+---
+
+After seeing a constant barrage of news concerning the... less than beloved *Fallout 76*, I felt the urge to revisit the classic *Black Isle Studios* games that generated one of my favorite franchises of all time.  I owned the first 3 games on GOG, but could I get these games running on a mobile platfrom?  Could a DosBox app help me to recapture the darkly humorous magic of these games on-the-go?
+
+## Researching Fallout on Mobile
+
+Some searching online led me to a couple of different guides.  First, an almost 7-year-old post on the Fallout-specific [No Mutants Allowed][nma-tutorial] forum.  This guide is very thorough, but it uses the Exagear app (which is dramatically overpriced) or [DosBox Turbo][dbt-store], which hasn't been updated in a while and I fear has been abandoned.  Luckly the other guide was produced by the lead developer of my preferred DosBox app, [Magic DosBox][mdb-store].  This [series of videos][mdb-tutorial] goes through installing Windows 95, setting it up for games, and creating new launchers for each.  While it is an excellent guide, I figured I could take the best parts of both to make a more streamlined and up-to-date guide to playing Fallout -- or any other Windows 95 games -- on Android.
+
+## Download Programs and Data
+
+First and foremost, you'll need to download quite a few things:
+
+1. On your Android device, install [DosBox Magic][mdb-store].  While there is a free version, the paid app is well worth the price.
+1. On a computer, install [VirtualBox][vb-downloads].
+1. You'll need a copy of the Windows 95 install disk to install into an image file.  If you have a physical disk, you'll have to rip it into an ISO file.
+1. The linked DosBox Magic tutorial has a [ZIP package][win95-drivers] containing some programs and drivers you'll eventually install in Windows 95.
+1. From the No Mutants Allowed post, download [this package][empty-imgs] of empty IMG files.
+1. If you're on Windows, install [WinImage][winimage-dl].  If you're on Linux or Mac, you'll use some terminal commands explained below.
+
+## Install and Setup Windows 95
+
+There really isn't any way to improve on the way bruenor, creator of DosBox Magic, shows installing Windows 95 in the first 2 videos linked above.  The process took me around an hour and is intensive, so you'll want to set aside time for this part.  
+
+That said, here is a detailed rundown:
+
+1. In VirtualBox, create a new VM with Windows 95 as the guest OS.  Use the following specs:
+	1. 64 MB of RAM
+	1. 512 MB Virtual Hard Disk, fixed size
+1. Click on the new VM, then click Settings.  Modify the following:
+	1. In System -> Motherboard, turn off floppy boot
+	1. In System -> Acceleration, turn off Nested Paging *AND* VT-x/AMD-V
+	1. In Storage, mount the Windows 95 install ISO to the Controller: IDE -> Optical Drive
+	1. In Network, disable Network Adapter
+	1. In USB, disable USB Controller
+	1. Save these settings
+1. Boot into your Windows 95 VM
+1. The install disk should boot up automatically. Install Windows
+	1. This step will take a little while as it re-formats the IMG file and installs Windows
+	1. When asked, don't create a boot floppy
+1. After installation is complete, change this setting:
+	1. In System -> Motherboard -> Boot Order, uncheck Optical
+1. Boot into your Windows 95 VM again and wait for it to finish setup
+1. Once the desktop has loaded, copy the "Win95" folder from the install disk to the Desktop
+1. Uninstall the default display driver:
+	1. Open "My Computer"
+	1. Right click in the white space, then click "Properties"
+	1. Go to the "Device Manager" tab
+	1. Expand the "Display adapters" option
+	1. Click on "Standard PCI Graphics Adapter (VGA)", then click the "Remove" button at the bottom
+1. Shut down the VM
+1. Convert the VM to an IMG file
+	1. If you're on Windows, open a Command Prompt in the folder containing the convertVHDToIMG program described in bruenor's video
+	1. If you're on Unix, open a terminal
+	1. Run this command:
+		`vboxmanage internalcommands converttoraw /path/to/win95.vhd win95.img`
+1. On your Android device, create a folder to hold these files, something like "Win95"
+1. Copy win95.img and Win95_Install.mgc to this folder on your device
+1. Open DosBox Magic on your Android device
+1. Import the Win95_Install.mgc file you copied earlier
+1. Edit this profile to match your device's folder:
+	1. Tap and hold on the "Win95 Install" profile that just appeared, then tap "Edit"
+	1. Scroll to the bottom and tap the gears button next to "Expert Commands"
+	1. Scroll to the "autoexec" section at the bottom
+	1. Change the filepath "/storage/emulated/0/" to wherever you copied the files earlier.  It may be the same
+	1. Tap the green checkmark to save this 
+1. Tap on the "Win95 Install" profile to start it
+1. Click on the "OK" button on the popup warning you about display adapters
+1. In the "Add New Hardware Wizard" popup, click "Next" 3 times, then "Finish"
+1. It will ask you to find "Disk 5".  This is in the folder we copied from the install disk in VirtualBox
+	1. Navigate to "C:\Windows\Desktop\Win95" then click "OK" in the top 2 popup windows
+	1. Let Windows finish setting up this driver
+1. Reboot Windows.  If it goes to a black screen, blue screen, or hangs, force close the app and try again
+1. Boot into "Safe Mode" when given the option
+1. Uninstall the COM ports:
+	1. Open "My Computer"
+	1. Right click in the white space, then click "Properties"
+	1. Go to the "Device Manager" tab
+	1. Expand the "Ports (COM & LPT)" option
+	1. Delete both "Communications Port" options
+	1. Close Device Manager
+1. Reboot Windows.  If it goes to a black screen, blue screen, or hangs, force close the app and try again
+1. Update the monitor settings:
+	1. When the desktop loads, right click an empty space on the desktop and select "Properties"
+	1. Click the "Settings" tab, then "Advance Properties"
+	1. Click the "Monitor" tab, click "Change"
+	1. In the right column, select "Standard VGA 640x480" and click "OK"
+	1. Click "Apply" then "OK"
+1. Install the updated video driver:
+	1. Click on "Advance Properties"
+	1. In the "Adapter" tab, click "Change"
+	1. Click "Have Disk"
+	1. Click "Browse", then at the bottom of the new window, open the "Drives" dropdown and select "D:"
+	1. Navigate to "D:\display\s3trio64" and click "OK"
+	1. Click "OK" and let Windows install the driver
+	1. When it's done, click "Apply" and close all windows
+	1. Restart the computer
+1. Install DirectX 8.0:
+	1. Open "Windows Explorer" to "D:\Directx"
+	1. Double-click on "Dcom95" and install it
+	1. Reboot Windows
+	1. When it comes back up, double-click on "Dx80eng" and install it
+	1. Reboot Windows
+1. Install video codec:
+	1. Open "Windows Explorer" to "D:\Video Codec"
+	1. Double-click on "Iv5setup" and install it
+	1. It will fail to install the "DirectShow Filter" -- that's fine
+1. Install Virtual Clone CD:
+	1. Open "Windows Explorer" to "D:\Virtual Clone CD"
+	1. Show hidden files by clicking "Veiw", then "Options"
+	1. In the "View" tab, click "Show all files", then click "Apply" and "OK"
+	1. A file called "Cfgmgr32.dll" should appear in Explorer.  Copy this file to "C:\Windows\System"
+	1. Reboot Windows
+	1. When it reappears, double-click on "Vc" in "D:\Virtual Clone CD" and install it
+1. Shut down Windows
+
+Once you're through all of these steps, Windows 95 is ready for gaming!
+
+## Putting Games Into IMG Files
+
+The above section follows the first 2 of bruenor's videos.  There is a third that shows him installing and playing Fallout 2, but he uses an ISO to install the game.  If you get your copy of Fallout 2 from Steam or GOG, this won't be the case, so I'll show how to copy installed programs into IMG files instead.
+
+This section is divided into 2 parts:  One for Windows users, and one for ~~superior~~ Unix users.
+
+### Windows
+
+1. Install the game you want on your computer.  This also means applying any mods or patches you want to install as well!
+1. Go to the set of empty IMG files downloaded earlier and extract the smallest one that's still bigger than your installed game and extract it -- i.e., Fallout 2 is around 700 MB, so you'd extract the 1 GB file
+1. Open the extracted IMG file in WinImage
+1. Inject the installed game's files into the IMG file
+	1. Click "Image" in the top bar, then select "Inject a folder..."
+	1. In the "Browse For Folder" popup, find the root directory of the installation
+	1. With that folder highlighted, click "OK"
+	1. Save the IMG file
+1. Rename the IMG file to something to reflect the game you just put in it
+Once you save the file and close WinImage, the file is ready to transfer to your Android device.
+
+### Unix
+
+1. Install the game you want on your computer.  This also means applying any mods or patches you want to install as well!
+1. Go to the set of empty IMG files downloaded earlier and extract the smallest one that's still bigger than your installed game and extract it -- i.e., Fallout 2 is around 700 MB, so you'd extract the 1 GB file
+1. Rename the IMG file for the game you installed
+1. Create a folder "tmpmount" in the same directory
+1. Mount the IMG file to this directory with the following command:
+
+	```
+sudo mount -o loop,offset=32256 game.img tmpmount/
+	```
+
+1. Copy the install directory for the game into the IMG file:
+
+	```
+sudo cp -r /path/to/game tmpmount/
+	```
+
+1. Unmount the IMG file:
+
+	```
+sudo umount tmpmount/
+	```
+
+Once the IMG file is unmounted, it's ready to transfer to your Android device.
+
+## Creating a Profile in Magic DosBox
+
+Once you have moved the IMG file onto your Android device, you need to create a profile for that game.  First thing you should do is check the Magic DosBox forums -- they have [an entire forum][mgc-share-forum] devoted to users sharing their .mgc files, which you can import.
+
+If you can't find a premade one, or you want to create your own.  First, duplicate the "Win95" profile donwloaded from bruenor by long-pressing it and tapping "Duplicate".  Then modify the new file to mount your game image in drive D instead of the Drivers.img file.
+
+Alternatively, you can start from scratch.  Open Magic DosBox and tap the "+" button on the left hand side.  Select "New Game".  This will open a window where you set up the game's configuration, where you'll need to modify a few lines:
+
+1. Enter the name of the game at the top
+1. (Optional) Tap the image to the left of the name to change the thumbnail image
+1. Scroll to the bottom and click the check box left of "Expert commands"
+1. Click the gear button to the right of "Expert commands"
+1. Change the mount command to use your game's IMG file instead of the "Drivers.img" file:
+	1. In the "autoexec" section, change the path after "imgmount d" to your game's IMG file
+	1. Change the four numbers at the end to match the drive geometry of the blank IMG file you originally copied the game into:
+
+	| Original IMG  | Drive Geometry |
+	|---------------|----------------|
+	| hdd-2gb.img   | 512,63,64,1023 |
+	| hdd-1gb.img   | 512,63,64,520  |
+	| hdd-512mb.img | 512,63,32,520  |
+	| hdd-256mb.img | 512,63,16,520  |
+
+1. Tap the green check mark at the bottom of both popups
+
+With the configuration saved, you can launch that profile.  It should boot into the Windows 95 installation that you set up earlier.  From inside Windows 95, you can install the game in the mounted drive.
+
+Arguably the most important part of a Magic DosBox profile is the custom button layout.  The app allows you to put a large number of buttons, each with custom labels and mapped to different inputs, all over the screen.  Take your time to customize a layout for each game -- a good layout can make or break the gameplay!
+
+## Finding Games to Play
+
+As mentioned earlier, most games will come from [GOG][gog] or [Steam][steam].  In fact, those who have been in the PC gaming world for a little while might remember when GOG was an acronym for "Good Old Games" and they specialized in old computer games!
+
+One other resource I would like to mention is the [Internet Archive][archive].  They have a collection of shareware, including a large number of demos for well known games and even a few full games.  This can be a great way to make sure a game will play well on your device before putting money down on it.
+
+[nma-tutorial]: http://www.nma-fallout.com/threads/how-to-run-fallout-1-2-and-tactics-on-android.198936/#post3942771
+[dbt-store]: https://play.google.com/store/apps/details?id=com.fishstix.dosbox&hl=en_US
+[mdb-tutorial]: https://www.youtube.com/watch?v=xg0PAmwgB2s
+[mdb-store]: https://play.google.com/store/apps/details?id=bruenor.magicbox
+[vb-downloads]: https://www.virtualbox.org/wiki/Downloads
+[win95-drivers]: http://www.mediafire.com/file/m9cdcalmsak0a5b/Win95Install.zip
+[empty-imgs]: https://mega.nz/#!WWgXRYLb!W412A0jZA2TzRtQlJNE-mh320PddGB8oRM2_Wj6m-0Q
+[winimage-dl]: https://www.softpedia.com/get/CD-DVD-Tools/CD-DVD-Images-Utils/WinImage.shtml
+[mgc-share-forum]: http://magicbox.imejl.sk/forums/forum/mgc-files-sharing/
+[gog]: https://www.gog.com/
+[steam]: https://store.steampowered.com/
+[archive]: https://archive.org/details/classicpcgames
